@@ -89,7 +89,7 @@ export const SignupPage = () => {
                   inputRef={register({
                     required: "This is a required field",
                     validate: value => (
-                      value == password.current || "The password confirmation must match"
+                      value === password.current || "The password confirmation must match"
                     )
                    })}
                 />
