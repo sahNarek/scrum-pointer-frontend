@@ -2,10 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/App';
 import reportWebVitals from './reportWebVitals';
+import { ApolloProvider } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { createHttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+
+const link = createHttpLink({
+  uri: 'http://localhost:3000/api/v1/graphql'
+})
+
+const client = new ApolloClient({
+  link,
+  cache: new InMemoryCache()
+})
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+  <ApolloProvider client={client}>
+      <App />
+  </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

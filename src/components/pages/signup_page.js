@@ -4,7 +4,9 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -12,13 +14,28 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
+const USER_SIGNUP = gql`
+    mutation UserSignUp($firstName: String!, $lastName:String!, $email: String!, $password: String!, $passwordConfirmation: String!){
+      userSignUp(input: { firstName: $firstName, lastName: $lastName, email: $email, password: $password, passwordConfirmation: $passwordConfirmation}){
+        user{
+          id
+          firstName
+          lastName
+          email
+        }
+        errors
+      }
+    }
+`;
+
 export const SignupPage = () => {
   const classes = useStyles();
   const { register, errors, handleSubmit, watch} = useForm();
   const password = useRef({});
   password.current = watch("password", "")
+  const [userSignUp, {data}] = useMutation(USER_SIGNUP)
 
-  const onSubmit = (data) => alert(JSON.stringify(data));
+  const onSubmit = (data) => userSignUp({variables: data})
   return(
     <div>
       <Container className={classes.container} maxWidth="xs">
