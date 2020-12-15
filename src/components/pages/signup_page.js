@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -15,8 +15,20 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const USER_SIGNUP = gql`
-    mutation UserSignUp($firstName: String!, $lastName:String!, $email: String!, $password: String!, $passwordConfirmation: String!){
-      userSignUp(input: { firstName: $firstName, lastName: $lastName, email: $email, password: $password, passwordConfirmation: $passwordConfirmation}){
+    mutation UserSignUp(
+      $firstName: String!,
+      $lastName:String!,
+      $email: String!,
+      $password: String!,
+      $passwordConfirmation: String!
+      ){
+      userSignUp(input: {
+        firstName: $firstName,
+        lastName: $lastName,
+        email: $email,
+        password: $password,
+        passwordConfirmation: $passwordConfirmation
+        }){
         user{
           id
           firstName
@@ -37,7 +49,6 @@ export const SignupPage = () => {
 
   const onSubmit = (data) => userSignUp({variables: data})
   return(
-    <div>
       <Container className={classes.container} maxWidth="xs">
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
@@ -122,7 +133,6 @@ export const SignupPage = () => {
         </Grid>
       </form>
     </Container>
-    </div>
   )
 }
 
