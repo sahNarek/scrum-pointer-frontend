@@ -29,7 +29,7 @@ const USER_SIGN_IN = gql`
     }
 `;
 
-export const SignInPage = () => {
+const SignInPage = () => {
   const classes = useStyles();
   const { register, errors, handleSubmit, watch} = useForm();
   const password = useRef({});

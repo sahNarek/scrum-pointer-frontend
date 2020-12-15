@@ -1,4 +1,4 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState} from 'react'
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -7,6 +7,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { get } from 'lodash';
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -40,14 +42,17 @@ const USER_SIGNUP = gql`
     }
 `;
 
-export const SignupPage = () => {
+const SignupPage = () => {
   const classes = useStyles();
   const { register, errors, handleSubmit, watch} = useForm();
+  const [payload, setPayload] = useState({})
   const password = useRef({});
   password.current = watch("password", "")
-  const [userSignUp, {data}] = useMutation(USER_SIGNUP)
+  const [userSignUp] = useMutation(USER_SIGNUP,{
+    onCompleted: (input) => setPayload(input)
+  })
 
-  const onSubmit = (data) => userSignUp({variables: data})
+  const onSubmit = (variables) => userSignUp({variables})
   return(
       <Container className={classes.container} maxWidth="xs">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -132,6 +137,7 @@ export const SignupPage = () => {
           </Grid>
         </Grid>
       </form>
+      {get(payload, 'userSignUp.errors') == '' ? <Redirect to='/sign_in'/> : <p>{get(payload, 'userSignUp.errors')}</p>}
     </Container>
   )
 }
