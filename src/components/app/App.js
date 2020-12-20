@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import SignInPage from '../pages/sign_in_page';
 import SignupPage from '../pages/signup_page';
 import NotFoundPage from '../pages/not_found_page';
@@ -16,8 +16,11 @@ const GET_CURRENT_USER = gql`
       id,
       firstName,
       lastName,
-      email    
+      email,
+      votingSessions{
+        name
       }
+    }
   }
 `;
 
@@ -29,6 +32,8 @@ const App = () => {
   const changeCurrentUser = (currentUser) => {
     client.writeData({data: {...data, currentUser}})
   }
+
+  console.log("the errors", error)
 
   return (
     <>
@@ -47,7 +52,12 @@ const App = () => {
             <Route exact path="/user">
               <UserPage changeCurrentUser={changeCurrentUser}/>
             </Route>
-            <Route render={() => (<NotFoundPage/>)}/>
+            <Route exact path="/">
+              <Redirect to="/home"/>
+            </Route>
+            <Route>
+              <NotFoundPage/>
+            </Route>
           </Switch>      
         </Router>
       </UserContext.Provider>
