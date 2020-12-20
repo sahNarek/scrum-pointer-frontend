@@ -1,24 +1,56 @@
-import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-import SignInPage from '../pages/sign_in_page'
-import SignupPage from '../pages/signup_page'
-import NotFound from '../pages/not_found_page'
+import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import SignInPage from '../pages/sign_in_page';
+import SignupPage from '../pages/signup_page';
+import NotFoundPage from '../pages/not_found_page';
+import UserPage from '../pages/user_page';
+import React, { useState } from 'react';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag'
+import { get } from 'lodash';
+import UserContext from '../../contexts/user_context';
+import NavigationBar from '../navigation/navigation_bar';
 
-function App() {
+const GET_CURRENT_USER = gql`
+  query{
+    currentUser{
+      id,
+      firstName,
+      lastName,
+      email    
+      }
+  }
+`;
+
+
+
+const App = () => {
+  const { loading, data, error, client } = useQuery(GET_CURRENT_USER)
+
+  const changeCurrentUser = (currentUser) => {
+    client.writeData({data: {...data, currentUser}})
+  }
+
   return (
     <>
-      <Router>
-        <Switch>
-          <Route path="/sign_in">
-            <SignInPage/>
-          </Route>
-          <Route path="/sign_up">
-            <SignupPage/>
-          </Route>
-          <Route path="*">
-            <NotFound/>
-          </Route>
-        </Switch>
-      </Router>
+      <UserContext.Provider value={{currentUser: get(data,'currentUser')}}>
+        <Router>
+          <Switch>
+            <Route exact path="/home">
+              <NavigationBar/>
+            </Route>
+            <Route exact path="/sign_in">
+              <SignInPage changeCurrentUser={changeCurrentUser}/>
+            </Route>
+            <Route exact path="/sign_up">
+              <SignupPage/>
+            </Route>  
+            <Route exact path="/user">
+              <UserPage changeCurrentUser={changeCurrentUser}/>
+            </Route>
+            <Route render={() => (<NotFoundPage/>)}/>
+          </Switch>      
+        </Router>
+      </UserContext.Provider>
     </>
   );
 }

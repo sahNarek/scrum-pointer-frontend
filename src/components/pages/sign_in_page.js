@@ -4,9 +4,11 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { useForm } from 'react-hook-form';
+import { get, useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag'
+import { Redirect } from 'react-router-dom';
+import UserContext from '../../contexts/user_context';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,16 +31,22 @@ const USER_SIGN_IN = gql`
     }
 `;
 
-const SignInPage = () => {
+const SignInPage = ({changeCurrentUser}) => {
   const classes = useStyles();
   const { register, errors, handleSubmit, watch} = useForm();
   const password = useRef({});
   password.current = watch("password", "")
-  const [userSignIn, {data}] = useMutation(USER_SIGN_IN)
+  const [userSignIn, { loading, error, data }] = useMutation(USER_SIGN_IN,{
+    onCompleted: (data) => {
+      if(get(data, 'userSignIn.token')){
+        sessionStorage.setItem('AUTH-TOKEN', get(data, 'userSignIn.token'))
+        changeCurrentUser(get(data, 'userSignIn.user'))
+      }
+    }
+  })
 
-  const onSubmit = (data) => userSignIn({variables: data})
+  const onSubmit = (variables) => userSignIn({variables})
   return(
-    <div>
       <Container className={classes.container} maxWidth="xs">
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
@@ -78,8 +86,14 @@ const SignInPage = () => {
           </Grid>
         </Grid>
       </form>
+      {/* {loading && <p>Loading ...</p>} */}
+      {/* {errors && <p>Errors are {JSON.stringify(errors)}</p>} */}
+      {data && <p>The succesfull payload {JSON.stringify(data)}</p>}
+      {get(data,'userSignIn.errors') == '' && !loading ? <Redirect to={{
+        pathname: '/user',
+        state: data
+      }}/> : <p>{get(data,'userSignIn.errors')}</p>}
     </Container>
-    </div>
   )
 }
 
