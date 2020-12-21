@@ -1,4 +1,4 @@
-import React, {useRef} from 'react'
+import React, { useRef, useEffect } from 'react'
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -31,7 +31,17 @@ const USER_SIGN_IN = gql`
     }
 `;
 
+
 const SignInPage = ({changeCurrentUser}) => {
+
+  useEffect(() => {
+    const abortController = new AbortController()
+  
+    return () => {
+      abortController.abort()
+    }
+  }, [])
+
   const classes = useStyles();
   const { register, errors, handleSubmit, watch} = useForm();
   const password = useRef({});
@@ -45,7 +55,9 @@ const SignInPage = ({changeCurrentUser}) => {
     }
   })
 
-  const onSubmit = (variables) => userSignIn({variables})
+  console.log('loading', loading)
+
+  const onSubmit = (variables) => userSignIn({variables, fetchPolicy: 'no-cache'})
   return(
       <Container className={classes.container} maxWidth="xs">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -86,13 +98,10 @@ const SignInPage = ({changeCurrentUser}) => {
           </Grid>
         </Grid>
       </form>
-      {/* {loading && <p>Loading ...</p>} */}
-      {/* {errors && <p>Errors are {JSON.stringify(errors)}</p>} */}
+      {loading && <p>Loading ...</p>}
+      {error && <p>We have got some errors {JSON.stringify(error)}</p>}
       {data && <p>The succesfull payload {JSON.stringify(data)}</p>}
-      {get(data,'userSignIn.errors') == '' && !loading ? <Redirect to={{
-        pathname: '/user',
-        state: data
-      }}/> : <p>{get(data,'userSignIn.errors')}</p>}
+      {get(data,'userSignIn.token') && !loading ? <Redirect to='user'/> : <p>{get(data,'userSignIn.errors')}</p>}
     </Container>
   )
 }

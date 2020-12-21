@@ -9,6 +9,7 @@ import gql from 'graphql-tag'
 import { get } from 'lodash';
 import UserContext from '../../contexts/user_context';
 import NavigationBar from '../navigation/navigation_bar';
+import { useApolloClient } from "@apollo/react-hooks";
 
 const GET_CURRENT_USER = gql`
   query{
@@ -27,13 +28,15 @@ const GET_CURRENT_USER = gql`
 
 
 const App = () => {
-  const { loading, data, error, client } = useQuery(GET_CURRENT_USER)
+  const { loading, data, error, refetch } = useQuery(GET_CURRENT_USER);
+  const client = useApolloClient();
 
-  const changeCurrentUser = (currentUser) => {
-    client.writeData({data: {...data, currentUser}})
+  console.log('client', client)
+
+  const changeCurrentUser = (user) => {
+    client.writeData({data: {...data, currentUser: user}});
+    refetch()
   }
-
-  console.log("the errors", error)
 
   return (
     <>
