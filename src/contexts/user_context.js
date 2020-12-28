@@ -1,7 +1,8 @@
 import { createContext } from 'react';
 
 const UserContext = createContext({
-  currentUser: {}
+  currentUser: {},
+  refetch: null
 });
 
 export default UserContext;
