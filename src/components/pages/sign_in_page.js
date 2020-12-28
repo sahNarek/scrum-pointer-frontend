@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -6,9 +6,8 @@ import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { get, useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 import { Redirect } from 'react-router-dom';
-import UserContext from '../../contexts/user_context';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -55,7 +54,6 @@ const SignInPage = ({changeCurrentUser}) => {
     }
   })
 
-  console.log('loading', loading)
 
   const onSubmit = (variables) => userSignIn({variables, fetchPolicy: 'no-cache'})
   return(

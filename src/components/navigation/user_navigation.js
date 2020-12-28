@@ -2,8 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-// import { NavLink } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 
 
@@ -24,7 +22,9 @@ const useStyles = makeStyles((theme) => ({
 
 
 const UserNavigation = ({signOutHandler}) => {
+  
   const classes = useStyles();
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.root}>
@@ -32,11 +32,6 @@ const UserNavigation = ({signOutHandler}) => {
           <Button className={classes.title} onClick={signOutHandler}>
             SIGN OUT
           </Button>
-          {/* <NavLink to="/about" className={classes.title}>
-            <Typography variant="h6" className={classes.title}>
-              SESSIONS
-            </Typography>
-          </NavLink> */}
         </Toolbar>
       </AppBar>
     </div>

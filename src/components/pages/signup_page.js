@@ -48,7 +48,7 @@ const SignupPage = () => {
   const [payload, setPayload] = useState({})
   const password = useRef({});
   password.current = watch("password", "")
-  const [userSignUp] = useMutation(USER_SIGNUP,{
+  const [userSignUp, { loading }] = useMutation(USER_SIGNUP,{
     onCompleted: (input) => setPayload(input)
   })
 
@@ -137,7 +137,7 @@ const SignupPage = () => {
           </Grid>
         </Grid>
       </form>
-      {get(payload, 'userSignUp.errors') == '' ? <Redirect to='/sign_in'/> : <p>{get(payload, 'userSignUp.errors')}</p>}
+      {(!loading && get(payload, 'userSignUp.errors') && get(payload, 'userSignUp.errors').length === 0) ? <Redirect to='/sign_in'/> : <p>{get(payload, 'userSignUp.errors')}</p>}
     </Container>
   )
 }
