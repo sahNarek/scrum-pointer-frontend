@@ -3,7 +3,7 @@ import SignInPage from '../pages/sign_in_page';
 import SignupPage from '../pages/signup_page';
 import NotFoundPage from '../pages/not_found_page';
 import UserPage from '../pages/user_page';
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag'
 import { get } from 'lodash';
@@ -19,7 +19,12 @@ const GET_CURRENT_USER = gql`
       lastName,
       email,
       votingSessions{
+        id
         name
+        votingDuration
+        tickets{
+          name
+        }
       }
     }
   }
@@ -28,20 +33,21 @@ const GET_CURRENT_USER = gql`
 
 
 const App = () => {
-  const { loading, data, error, refetch } = useQuery(GET_CURRENT_USER);
+  const { loading, data, refetch } = useQuery(GET_CURRENT_USER);
   const client = useApolloClient();
 
-  console.log('client', client)
 
   const changeCurrentUser = (user) => {
     client.writeData({data: {...data, currentUser: user}});
     refetch()
   }
 
+
   return (
     <>
-      <UserContext.Provider value={{currentUser: get(data,'currentUser')}}>
+      <UserContext.Provider value={{currentUser: get(data,'currentUser'), refetch}}>
         <Router>
+        {!loading && get(data,'currentUser') != null && <Redirect to="/user"/>}
           <Switch>
             <Route exact path="/home">
               <NavigationBar/>
