@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -99,7 +99,7 @@ const SignInPage = ({changeCurrentUser}) => {
       {loading && <p>Loading ...</p>}
       {error && <p>We have got some errors {JSON.stringify(error)}</p>}
       {data && <p>The succesfull payload {JSON.stringify(data)}</p>}
-      {get(data,'userSignIn.token') && !loading ? <Redirect to='user'/> : <p>{get(data,'userSignIn.errors')}</p>}
+      {get(data,'userSignIn.token') && !loading ? <Redirect to={`user/${get(data,'userSignIn.user.id')}`}/> : <p>{get(data,'userSignIn.errors')}</p>}
     </Container>
   )
 }

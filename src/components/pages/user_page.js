@@ -4,8 +4,12 @@ import { get } from 'lodash';
 import UserNavigation from '../navigation/user_navigation';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import VotingSession from '../../components/voting_session/voting_session';
 import VotingSessionDialogue from '../../components/dialogs/create_voting_session';
+import { NavLink } from 'react-router-dom';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { Typography } from '@material-ui/core';
 
 const signOutHandler = (changeCurrentUser) => {
   sessionStorage.clear()
@@ -13,7 +17,7 @@ const signOutHandler = (changeCurrentUser) => {
 }
 
 const getFullName = (user) => (
-  `${get(user, 'firstName')}, ${get(user, 'lastName')}`
+  `${get(user, 'firstName')} ${get(user, 'lastName')}`
 )
 
 
@@ -30,6 +34,17 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     textDecoration: 'none',
     color: "white",
+  },
+  link: {
+    textDecoration: 'none'
+  },
+  bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+  },
+  pos: {
+    marginBottom: 12,
   }
 }));
 
@@ -41,7 +56,20 @@ const UserPage = (props) => {
 
   const votingSessions = (user) => (
     get(user, 'votingSessions').map((session,index) => (
-      <VotingSession session={session} key={get(session,'id') != null ?  get(session,'id'): index }/>
+      <NavLink key={index} className={classes.link} to={`/session/${get(session,'id')}`}>
+        <Card>
+          <CardContent>
+            <Typography gutterBottom>
+              Session ID: {get(session, 'id')}
+            </Typography>
+            <Typography variant="body2" component="p">
+              Session Name: {get(session, 'name')}
+              <br />
+              Session voting duration: {get(session, 'votingDuration')}
+            </Typography>
+          </CardContent>
+        </Card>
+      </NavLink>
     ))
   )
 
@@ -55,7 +83,10 @@ const UserPage = (props) => {
       {({currentUser, refetch}) => {
         if(currentUser == null){
           return(
-            <h1>Loading ...</h1>
+            <Typography variant="h4">
+              Loading
+              <CircularProgress />
+            </Typography>
           )
         }
         else{

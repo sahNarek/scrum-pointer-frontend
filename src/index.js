@@ -12,7 +12,7 @@ import { ActionCableLink } from 'graphql-ruby-client';
 import { ApolloLink } from 'apollo-link';
 
 
-const cable = ActionCable.createConsumer()
+const cable = ActionCable.createConsumer('ws://localhost:3000/cable')
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:3000/api/v1/graphql'
