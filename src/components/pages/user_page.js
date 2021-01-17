@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import UserContext from '../../contexts/user_context';
+import { UserContext } from '../../contexts/user_context';
 import { get } from 'lodash';
 import UserNavigation from '../navigation/user_navigation';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import VotingSessionDialogue from '../../components/dialogs/create_voting_session';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Loading from '../../components/routing/loading';
 import { Typography } from '@material-ui/core';
 
-const signOutHandler = (changeCurrentUser) => {
+const signOutHandler = (changeCurrentUser, history) => {
   sessionStorage.clear()
   changeCurrentUser(null)
+  history.push('/')
 }
 
 const getFullName = (user) => (
@@ -50,7 +51,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const UserPage = (props) => {
+const UserPage = ({changeCurrentUser}) => {
+  const history = useHistory()
   const classes = useStyles();
   const [ showForm, setShowForm ] = useState(false)
 
@@ -83,16 +85,13 @@ const UserPage = (props) => {
       {({currentUser, refetch}) => {
         if(currentUser == null){
           return(
-            <Typography variant="h4">
-              Loading
-              <CircularProgress />
-            </Typography>
+            <Loading/>
           )
         }
         else{
           return(
             <>
-              <UserNavigation signOutHandler={() => (signOutHandler(props.changeCurrentUser))}/>
+              <UserNavigation signOutHandler={() => (signOutHandler(changeCurrentUser, history))}/>
               <h2>Welcome {getFullName(currentUser)}</h2>
               <Button className={classes.root} onClick={toggleShowForm}>Create a Voting Session</Button>
               {currentUser && votingSessions(currentUser)}

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
+import { Router, Redirect, Route, Switch} from 'react-router-dom';
 import SignInPage from '../pages/sign_in_page';
 import SignupPage from '../pages/signup_page';
 import NotFoundPage from '../pages/not_found_page';
@@ -8,10 +8,12 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag'
 import { get } from 'lodash';
-import UserContext from '../../contexts/user_context';
+import { UserContext } from '../../contexts/user_context';
 import NavigationBar from '../navigation/navigation_bar';
 import { useApolloClient } from "@apollo/react-hooks";
 import Ticket from '../../components/ticket/ticket'
+import { createBrowserHistory } from "history";
+import PrivateRoute from "../../components/routing/private_route";
 
 const GET_CURRENT_USER = gql`
   query{
@@ -44,11 +46,12 @@ const App = () => {
     refetch()
   }
 
+  const history = createBrowserHistory({forceRefresh:true});
 
   return (
     <>
       <UserContext.Provider value={{currentUser: get(data,'currentUser'), refetch}}>
-        <Router>
+        <Router history={history}>
           <Switch>
             <Route exact path="/home">
               <NavigationBar/>
@@ -59,10 +62,10 @@ const App = () => {
             </Route>
             <Route exact path="/sign_up">
               <SignupPage/>
-            </Route>  
-            <Route exact path="/user/:id">
-              <UserPage changeCurrentUser={changeCurrentUser}/>
             </Route>
+            <PrivateRoute redirectPath="/sign_in" exact={true} path="/user/:id" conditionToRender={!loading && get(data,'currentUser') != null}>
+              <UserPage changeCurrentUser={changeCurrentUser}/>
+            </PrivateRoute>  
             <Route exact path="/">
               <Redirect to="/home"/>
             </Route>

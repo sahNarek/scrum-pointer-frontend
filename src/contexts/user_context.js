@@ -1,8 +1,10 @@
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 
-const UserContext = createContext({
+export const UserContext = createContext({
   currentUser: {},
   refetch: null
 });
 
-export default UserContext;
+export const useAuth = () => (
+  useContext(UserContext)
+)

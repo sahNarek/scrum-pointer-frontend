@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { get } from 'lodash'
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import Loading from '../../components/routing/loading';
+import Typography from '@material-ui/core/Typography';
 
- 
 const GET_TICKET = gql`
   query ticket($id: ID!){
     ticket(id: $id){
@@ -78,16 +77,7 @@ const Ticket = ( {match }) => {
   return ( 
     <>
       <Typography variant="h1">{(get(data, 'ticket.name'))}</Typography>
-      {loading &&     
-      <Typography variant="h4">
-          Loading
-        <CircularProgress />
-      </Typography>}
-      {/* <ul>
-        {ticket && get(ticket, 'estimates').map((estimate, index) => (
-          <li key={index}>{get(estimate, 'point')} voted by: {get(estimate, 'voterId')}</li>
-        ))}
-      </ul> */}
+      {loading && <Loading/>}
       {ticket && estimates(ticket)}
     </>
     );

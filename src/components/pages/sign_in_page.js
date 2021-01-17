@@ -8,6 +8,7 @@ import { get, useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { Redirect } from 'react-router-dom';
+import Loading from '../routing/loading'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -96,9 +97,8 @@ const SignInPage = ({changeCurrentUser}) => {
           </Grid>
         </Grid>
       </form>
-      {loading && <p>Loading ...</p>}
+      {loading && <Loading/>}
       {error && <p>We have got some errors {JSON.stringify(error)}</p>}
-      {data && <p>The succesfull payload {JSON.stringify(data)}</p>}
       {get(data,'userSignIn.token') && !loading ? <Redirect to={`user/${get(data,'userSignIn.user.id')}`}/> : <p>{get(data,'userSignIn.errors')}</p>}
     </Container>
   )
