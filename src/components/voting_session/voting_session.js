@@ -55,12 +55,15 @@ const VotingSession = ({match}) => {
   return(
     <>
       {loading && <Loading/>}
-      <Typography variant="h4">
-        Session Name: {get(data, 'votingSession.name')}
-      </Typography>
-      <Button onClick={toggleShowForm}>Create a Ticket</Button>
-      <TicketDialogue showForm={showForm} toggleShowForm={toggleShowForm} refetch={refetch} votingSessionId={id}/>
-      {get(data,'votingSession.tickets') && tickets(get(data, 'votingSession'))}
+      {!loading && 
+      <>
+        <Typography variant="h4">
+          Session Name: {get(data, 'votingSession.name')}
+        </Typography>
+        <Button onClick={toggleShowForm}>Create a Ticket</Button>
+        <TicketDialogue showForm={showForm} toggleShowForm={toggleShowForm} refetch={refetch} votingSessionId={id}/>
+        {get(data,'votingSession.tickets') && tickets(get(data, 'votingSession'))}
+      </>}
     </>
   )
 }

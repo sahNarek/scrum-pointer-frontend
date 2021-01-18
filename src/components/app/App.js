@@ -63,14 +63,24 @@ const App = () => {
             <Route exact path="/sign_up">
               <SignupPage/>
             </Route>
-            <PrivateRoute redirectPath="/sign_in" exact={true} path="/user/:id" conditionToRender={!loading && get(data,'currentUser') != null}>
-              <UserPage changeCurrentUser={changeCurrentUser}/>
-            </PrivateRoute>  
+            <PrivateRoute 
+              redirectPath="/sign_in" 
+              exact={true} 
+              path="/user/:id"
+              component={UserPage}/>
             <Route exact path="/">
               <Redirect to="/home"/>
             </Route>
-            <Route exact path="/session/:id" component={VotingSession}/>
-            <Route exact path="/ticket/:id" component={Ticket}/>
+            <PrivateRoute 
+             redirectPath="/sign_in" 
+             exact={true} 
+             path="/session/:id"
+             component={VotingSession}/>
+            <PrivateRoute 
+             redirectPath="/sign_in" 
+             exact={true} 
+             path="/ticket/:id"
+             component={Ticket}/>
             <Route>
               <NotFoundPage/>
             </Route>

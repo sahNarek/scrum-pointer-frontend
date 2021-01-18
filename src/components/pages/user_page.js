@@ -11,10 +11,9 @@ import CardContent from '@material-ui/core/CardContent';
 import Loading from '../../components/routing/loading';
 import { Typography } from '@material-ui/core';
 
-const signOutHandler = (changeCurrentUser, history) => {
+const signOutHandler = (history) => {
   sessionStorage.clear()
-  changeCurrentUser(null)
-  history.push('/')
+  history.push('/home')
 }
 
 const getFullName = (user) => (
@@ -51,10 +50,10 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const UserPage = ({changeCurrentUser}) => {
-  const history = useHistory()
+const UserPage = () => {
+  const history = useHistory();
   const classes = useStyles();
-  const [ showForm, setShowForm ] = useState(false)
+  const [ showForm, setShowForm ] = useState(false);
 
   const votingSessions = (user) => (
     get(user, 'votingSessions').map((session,index) => (
@@ -91,7 +90,7 @@ const UserPage = ({changeCurrentUser}) => {
         else{
           return(
             <>
-              <UserNavigation signOutHandler={() => (signOutHandler(changeCurrentUser, history))}/>
+              <UserNavigation signOutHandler={() => (signOutHandler(history))}/>
               <h2>Welcome {getFullName(currentUser)}</h2>
               <Button className={classes.root} onClick={toggleShowForm}>Create a Voting Session</Button>
               {currentUser && votingSessions(currentUser)}
