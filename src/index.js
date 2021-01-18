@@ -8,7 +8,7 @@ import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from '@apollo/client/link/context';
 import ActionCable from 'actioncable';
-import { ActionCableLink } from 'graphql-ruby-client';
+import ActionCableLink from 'graphql-ruby-client/dist/subscriptions/ActionCableLink';
 import { ApolloLink } from 'apollo-link';
 
 
