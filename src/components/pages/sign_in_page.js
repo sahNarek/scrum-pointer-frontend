@@ -8,7 +8,8 @@ import { get, useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { Redirect } from 'react-router-dom';
-import Loading from '../routing/loading'
+import Loading from '../routing/loading';
+import { useLocation } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -33,7 +34,6 @@ const USER_SIGN_IN = gql`
 
 
 const SignInPage = ({changeCurrentUser}) => {
-
   useEffect(() => {
     const abortController = new AbortController()
   
@@ -43,6 +43,7 @@ const SignInPage = ({changeCurrentUser}) => {
   }, [])
 
   const classes = useStyles();
+  const { state } = useLocation(); 
   const { register, errors, handleSubmit, watch} = useForm();
   const password = useRef({});
   password.current = watch("password", "")
@@ -55,6 +56,8 @@ const SignInPage = ({changeCurrentUser}) => {
     }
   })
 
+
+  const redirectPath = state?.from ? state.from : `user/${get(data,'userSignIn.user.id')}`
 
   const onSubmit = (variables) => userSignIn({variables, fetchPolicy: 'no-cache'})
   return(
@@ -99,7 +102,7 @@ const SignInPage = ({changeCurrentUser}) => {
       </form>
       {loading && <Loading/>}
       {error && <p>We have got some errors {JSON.stringify(error)}</p>}
-      {get(data,'userSignIn.token') && !loading ? <Redirect to={`user/${get(data,'userSignIn.user.id')}`}/> : <p>{get(data,'userSignIn.errors')}</p>}
+      {get(data,'userSignIn.token') && !loading ? <Redirect to={redirectPath}/> : <p>{get(data,'userSignIn.errors')}</p>}
     </Container>
   )
 }
