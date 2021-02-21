@@ -42,6 +42,11 @@ const NavigationBar = () => {
               ABOUT
             </Typography>
           </NavLink>
+          <NavLink to="/join" className={classes.title}>
+            <Typography variant="h6" className={classes.title}>
+              JOIN
+            </Typography>
+          </NavLink>
         </Toolbar>
       </AppBar>
     </div>

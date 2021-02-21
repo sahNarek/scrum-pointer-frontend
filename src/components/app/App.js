@@ -14,6 +14,8 @@ import { useApolloClient } from "@apollo/react-hooks";
 import Ticket from '../../components/ticket/ticket'
 import { createBrowserHistory } from "history";
 import PrivateRoute from "../../components/routing/private_route";
+import JoinAsVoter from '../join/join_as_voter';
+import VoterPage from "../../components/pages/voter_page";
 
 const GET_CURRENT_USER = gql`
   query{
@@ -79,8 +81,12 @@ const App = () => {
             <PrivateRoute 
              redirectPath="/sign_in" 
              exact={true} 
-             path="/ticket/:id"
+             path="/session/:id/ticket/:id"
              component={Ticket}/>
+            <Route path="/join">
+              <JoinAsVoter/>
+            </Route>
+            <Route path="/voter/:id" render={(props) => <VoterPage {...props}/>}/>
             <Route>
               <NotFoundPage/>
             </Route>

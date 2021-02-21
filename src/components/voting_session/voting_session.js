@@ -30,6 +30,7 @@ const GET_VOTING_SESSION = gql`
 const VotingSession = ({match}) => {
   const [ showForm, setShowForm ] = useState(false)
   const { id } = get(match, 'params')
+  const { url } = match
   const { loading, data, refetch } = useQuery(GET_VOTING_SESSION,{
     variables: {id}
   });
@@ -40,7 +41,7 @@ const VotingSession = ({match}) => {
 
   const tickets = (votingSession) => (
     get(votingSession, 'tickets').map((ticket, index) => (
-      <NavLink key={index} to={`/ticket/${get(ticket,'id')}`}>
+      <NavLink key={index} to={`${url}/ticket/${get(ticket,'id')}`}>
         <Card>
           <CardContent>
             <Typography gutterBottom>
