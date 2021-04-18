@@ -25,7 +25,7 @@ const hasSubscriptionOperation = ({ query: { definitions } }) => {
 }
 
 const authLink = setContext((_, { headers}) => {
-  const token = sessionStorage.getItem('AUTH-TOKEN');
+  const token = localStorage.getItem('AUTH-TOKEN');
   return {
     headers: {
       ...headers,

@@ -50,7 +50,7 @@ const SignInPage = ({changeCurrentUser}) => {
   const [userSignIn, { loading, error, data }] = useMutation(USER_SIGN_IN,{
     onCompleted: (data) => {
       if(get(data, 'userSignIn.token')){
-        sessionStorage.setItem('AUTH-TOKEN', get(data, 'userSignIn.token'))
+        localStorage.setItem('AUTH-TOKEN', get(data, 'userSignIn.token'))
         changeCurrentUser(get(data, 'userSignIn.user'))
       }
     }
