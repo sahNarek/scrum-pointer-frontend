@@ -14,6 +14,10 @@ const GET_TICKET = gql`
       estimates{
         point
         voterId
+        voter{
+          id
+          name
+        }
       }
     }
   }
@@ -65,7 +69,7 @@ const Ticket = ( {match }) => {
             Estimated Point: {get(estimate, 'point')}
           </Typography>
           <Typography gutterBottom>
-            Estimated by: {get(estimate, 'voterId')}
+            Estimated by: {get(estimate, 'voter.name')}
           </Typography>
         </CardContent>
       </Card>
