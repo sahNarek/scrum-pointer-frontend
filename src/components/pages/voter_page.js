@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
@@ -49,17 +49,48 @@ const CREATE_ESTIMATE = gql`
   }
 `
 
+const SUBSCRIBE_TO_TICKETS = gql`
+  subscription($votingSessionId: ID!){
+    ticketAddedToVotingSession(votingSessionId:$votingSessionId){
+      id
+      name
+    }
+  }
+`
+
 const VoterPage = ({ location }) => {
   const { state } = location;
   const { voter } = state;
   const { votingSessionId, id } = voter;
-  const { loading, data } = useQuery(GET_VOTING_SESSION,{
+  const { loading, data, subscribeToMore } = useQuery(GET_VOTING_SESSION,{
     variables: {id: votingSessionId}
   });
 
   const { register, handleSubmit } = useForm();
   const [ showDialogue, setShowDialogue ] = useState(false);
   const [ createEstimate ] = useMutation(CREATE_ESTIMATE);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToMore({
+      document: SUBSCRIBE_TO_TICKETS,
+      variables: { votingSessionId: parseInt(votingSessionId)},
+      updateQuery(prev, {subscriptionData}) {
+        if(subscriptionData){
+          const { ticketAddedToVotingSession: newTicket } = get(subscriptionData, 'data')
+          console.log([...prev.votingSession.tickets, newTicket])
+          return {
+            votingSession: {...prev.votingSession, tickets: [...prev.votingSession.tickets, newTicket] }
+          }
+        }
+        else{
+          return prev
+        }
+      }
+    })
+
+    return () => unsubscribe()
+
+  },[[votingSessionId, data, loading, subscribeToMore]])
 
   const toggleShowDialogue = () => {
     setShowDialogue(!showDialogue)

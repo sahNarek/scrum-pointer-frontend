@@ -27,6 +27,10 @@ const SUBSCRIBE_TO_ESTIMATES = gql`
   subscription($ticketId: ID!){
     estimateAddedToTicket(ticketId:$ticketId){
       point
+      voter{
+        id
+        name
+      }
       voterId
     }
   }
