@@ -90,7 +90,7 @@ const VoterPage = ({ location }) => {
 
     return () => unsubscribe()
 
-  },[[votingSessionId, data, loading, subscribeToMore]])
+  },[votingSessionId, data, loading, subscribeToMore])
 
   const toggleShowDialogue = () => {
     setShowDialogue(!showDialogue)
