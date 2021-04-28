@@ -4,18 +4,9 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
-import CardContent from '@material-ui/core/CardContent';
-import Loading from '../../components/routing/loading';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import { Typography } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-
+import Loading from '../../components/routing/loading';
+import TicketVote from '../../components/ticket/ticket_vote';
 
 const GET_VOTING_SESSION = gql`
   query votingSession($id: ID!){
@@ -68,6 +59,7 @@ const VoterPage = ({ location }) => {
 
   const { register, handleSubmit } = useForm();
   const [ showDialogue, setShowDialogue ] = useState(false);
+  const [ currentTicketId, setCurrentTicketId ] = useState(null);
   const [ createEstimate ] = useMutation(CREATE_ESTIMATE);
 
   useEffect(() => {
@@ -92,13 +84,19 @@ const VoterPage = ({ location }) => {
 
   },[votingSessionId, data, loading, subscribeToMore])
 
-  const toggleShowDialogue = () => {
+  const toggleShowDialogue = (ticket) => {
     setShowDialogue(!showDialogue)
+    setCurrentTicketId(get(ticket,'id'))
   }
 
   const onSubmit = (variables) => {
-    console.log("variables" , variables);
-    const mutationVariables = { ...variables, point: parseInt(variables.point), votingSessionId, voterId: id };
+    const mutationVariables = { 
+      ...variables, 
+      point: parseInt(variables.point), 
+      votingSessionId, 
+      voterId: id, 
+      ticketId: currentTicketId 
+    };
     createEstimate({variables: mutationVariables}).then((data) => {
       if(!(get(data,'errors'))){
         toggleShowDialogue()
@@ -109,48 +107,16 @@ const VoterPage = ({ location }) => {
 
   const tickets = (votingSession) => (
     get(votingSession, 'tickets').map((ticket, index) => (
-      <Card key={index}>
-        <CardContent>
-          <Typography gutterBottom>
-            Ticket Name: {get(ticket, 'name')}
-          </Typography>
-        </CardContent>
-        <Button onClick={() => (toggleShowDialogue())}>Vote</Button>
-        <Dialog open={showDialogue} onClose={() => (toggleShowDialogue())} aria-labelledby="form-dialog-title">
-            <form onSubmit={handleSubmit((variables) => 
-              onSubmit({...variables, ticketId: get(ticket, 'id')}))}>
-              <DialogContent>
-                <DialogContentText>
-                  Please input your estimate for the ticket.
-                </DialogContentText>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <TextField 
-                          fullWidth 
-                          label="Point" 
-                          name="point" 
-                          size="small" 
-                          variant="filled" 
-                          inputRef={register({required: true})}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </DialogContent>
-                <DialogActions>
-                  <Button type="submit" ref={register} color="primary">
-                    Estimate
-                  </Button>
-                  <Button onClick={() => (toggleShowDialogue())} color="primary">
-                    Cancel
-                  </Button>
-                </DialogActions>
-        </form>
-        </Dialog>
-      </Card>
+      <TicketVote
+        id={get(ticket,'id')} 
+        key={index} 
+        ticket={ticket} 
+        handleSubmit={handleSubmit} 
+        showDialogue={showDialogue} 
+        toggleShowDialogue={toggleShowDialogue}
+        register={register}
+        onSubmit={onSubmit}
+        />
     ))
   )
 
