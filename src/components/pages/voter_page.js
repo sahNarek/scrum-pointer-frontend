@@ -54,7 +54,7 @@ const VoterPage = ({ location }) => {
   const { state } = location;
   const { voter } = state;
   const { votingSessionId, id } = voter;
-  const { loading, data, subscribeToMore } = useQuery(GET_VOTING_SESSION,{
+  const { loading, data, refetch, subscribeToMore } = useQuery(GET_VOTING_SESSION,{
     variables: {id: votingSessionId}
   });
 
@@ -90,7 +90,7 @@ const VoterPage = ({ location }) => {
     setCurrentTicketId(get(ticket,'id'))
   }
 
-  const onSubmit = (variables) => {
+  const onSubmit = (variables, refetch) => {
     const mutationVariables = { 
       ...variables, 
       point: parseInt(variables.point), 
@@ -101,6 +101,7 @@ const VoterPage = ({ location }) => {
     createEstimate({variables: mutationVariables}).then((data) => {
       if(!(get(data,'errors'))){
         toggleShowDialogue()
+        refetch()
       }
     })
   }

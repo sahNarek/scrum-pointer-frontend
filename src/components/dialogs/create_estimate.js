@@ -7,11 +7,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
-const CreateEstimate = ({text, showDialogue, toggleShowDialogue, handleSubmit, onSubmit, register}) => {
+const CreateEstimate = ({text, showDialogue, toggleShowDialogue, handleSubmit, onSubmit, register, refetch}) => {
   return (
     <Dialog open={showDialogue} onClose={() => (toggleShowDialogue())} aria-labelledby="form-dialog-title">
         <form onSubmit={handleSubmit((variables) => 
-          onSubmit(variables))}>
+          onSubmit(variables, refetch))}>
           <DialogContent>
             <DialogContentText>
               {text}

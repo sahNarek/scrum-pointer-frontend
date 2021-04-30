@@ -43,7 +43,7 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
   const [ currentEstimateId, setCurrentEstimateId ] = useState(null);
   const [ editEstimate ] = useMutation(EDIT_ESTIMATE);
 
-  const { loading, data } = useQuery(GET_VOTER_ESTIMATES_FOR_TICKET,{
+  const { loading, data, refetch } = useQuery(GET_VOTER_ESTIMATES_FOR_TICKET,{
     variables: {
       voterId,
       ticketId: get(ticket, 'id')
@@ -70,7 +70,6 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
 
   const toggleShowEditDialogue = (estimate) => {
     setShowEditDialogue(!showEditDialogue)
-    console.log('the estimate', estimate)
     setCurrentEstimateId(get(estimate,'id'))
   }
 
@@ -103,6 +102,7 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
       ))}
     <Button onClick={() => (toggleShowDialogue(ticket))}>Vote</Button>
     <CreateEstimate
+      refetch={refetch}
       text={`Please input the point for ${get(ticket,'name')}`}
       showDialogue={showDialogue}
       toggleShowDialogue={toggleShowDialogue}
