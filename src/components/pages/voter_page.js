@@ -108,7 +108,7 @@ const VoterPage = ({ location }) => {
   const tickets = (votingSession) => (
     get(votingSession, 'tickets').map((ticket, index) => (
       <TicketVote
-        id={get(ticket,'id')} 
+        voterId={get(voter,'id')}
         key={index} 
         ticket={ticket} 
         handleSubmit={handleSubmit} 

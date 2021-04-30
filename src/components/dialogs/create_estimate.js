@@ -1,5 +1,4 @@
 import React from 'react';
-import { get } from 'lodash';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -8,14 +7,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
-const CreateEstimate = ({showDialogue, toggleShowDialogue, handleSubmit, onSubmit, register}) => {
+const CreateEstimate = ({text, showDialogue, toggleShowDialogue, handleSubmit, onSubmit, register}) => {
   return (
     <Dialog open={showDialogue} onClose={() => (toggleShowDialogue())} aria-labelledby="form-dialog-title">
         <form onSubmit={handleSubmit((variables) => 
           onSubmit(variables))}>
           <DialogContent>
             <DialogContentText>
-              Please input your estimate for the ticket.
+              {text}
             </DialogContentText>
             <Grid container spacing={3}>
               <Grid item xs={12}>
