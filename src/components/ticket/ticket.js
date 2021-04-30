@@ -12,6 +12,7 @@ const GET_TICKET = gql`
     ticket(id: $id){
       name
       estimates{
+        id
         point
         voterId
         voter{
@@ -26,6 +27,7 @@ const GET_TICKET = gql`
 const SUBSCRIBE_TO_ESTIMATES = gql`
   subscription($ticketId: ID!){
     estimateAddedToTicket(ticketId:$ticketId){
+      id
       point
       voter{
         id
@@ -35,6 +37,27 @@ const SUBSCRIBE_TO_ESTIMATES = gql`
     }
   }
 `
+
+// TODO! handle with backend later
+
+const pickCorrectEstimates = (estimates, newEstimate) => {
+  const filteredeEstimates = estimates.filter((estimate) => (get(estimate, 'id') === get(newEstimate,'id')))
+  if(filteredeEstimates.length === 0){
+    return [...estimates, newEstimate]
+  }
+  else{
+    const updatedEstimates = estimates.map((estimate) => {
+      if(get(estimate,'id') === get(newEstimate,'id')){
+        return newEstimate
+      }
+      else{
+        return estimate
+      }
+    })
+    return updatedEstimates
+  }
+  
+}
 
 
 const Ticket = ( {match }) => {
@@ -51,7 +74,7 @@ const Ticket = ( {match }) => {
         if(subscriptionData){
           const { estimateAddedToTicket: newEstimate  } = get(subscriptionData, 'data')
           return {
-            ticket: { ...prev.ticket, estimates:[...prev.ticket.estimates, newEstimate]}
+            ticket: { ...prev.ticket, estimates: pickCorrectEstimates(prev.ticket.estimates, newEstimate)}
           }
         }
         else{

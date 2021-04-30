@@ -54,7 +54,7 @@ const VoterPage = ({ location }) => {
   const { state } = location;
   const { voter } = state;
   const { votingSessionId, id } = voter;
-  const { loading, data, refetch, subscribeToMore } = useQuery(GET_VOTING_SESSION,{
+  const { loading, data, subscribeToMore } = useQuery(GET_VOTING_SESSION,{
     variables: {id: votingSessionId}
   });
 
@@ -70,7 +70,6 @@ const VoterPage = ({ location }) => {
       updateQuery(prev, {subscriptionData}) {
         if(subscriptionData){
           const { ticketAddedToVotingSession: newTicket } = get(subscriptionData, 'data')
-          console.log([...prev.votingSession.tickets, newTicket])
           return {
             votingSession: {...prev.votingSession, tickets: [...prev.votingSession.tickets, newTicket] }
           }
