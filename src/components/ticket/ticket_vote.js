@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import { get } from 'lodash';
 import { useMutation } from '@apollo/react-hooks';
@@ -9,16 +8,6 @@ import CardContent from '@material-ui/core/CardContent';
 import { Typography } from '@material-ui/core';
 import CreateEstimate from '../dialogs/create_estimate';
 import EditEstimate from '../dialogs/edit_estimate';
-
-
-const GET_VOTER_ESTIMATES_FOR_TICKET = gql`
-  query getVoterEstimates($voterId: ID!, $ticketId: ID!){
-    getVoterEstimates(voterId: $voterId, ticketId: $ticketId){
-      id
-      point
-    }
-  }
-`
 
 const EDIT_ESTIMATE = gql`
   mutation updateEstimate($id: ID!, $voterId: ID, $ticketId: ID, $votingSessionId: ID, $point: Int){
@@ -37,24 +26,13 @@ const EDIT_ESTIMATE = gql`
   }
 `
 
-const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDialogue, register, onSubmit}) => {
+const TicketVote = ({voterId, estimates, ticket, showDialogue, handleSubmit, toggleShowDialogue, register, onSubmit}) => {
 
   const [ showEditDialogue, setShowEditDialogue ] = useState(false);
   const [ currentEstimateId, setCurrentEstimateId ] = useState(null);
   const [ editEstimate ] = useMutation(EDIT_ESTIMATE);
-
-  const { loading, data, refetch } = useQuery(GET_VOTER_ESTIMATES_FOR_TICKET,{
-    variables: {
-      voterId,
-      ticketId: get(ticket, 'id')
-    }
-  })
   
-  const estimates = get(data,'getVoterEstimates');
-
   const onEditSubmit = (variables) => {
-    console.log("the vars", variables)
-    console.log('current estiamte id', currentEstimateId)
     const mutationVariables = { 
       ...variables, 
       point: parseInt(variables.point), 
@@ -68,6 +46,7 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
     })
   }
 
+
   const toggleShowEditDialogue = (estimate) => {
     setShowEditDialogue(!showEditDialogue)
     setCurrentEstimateId(get(estimate,'id'))
@@ -80,9 +59,9 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
         Ticket Name: {get(ticket, 'name')}
       </Typography>
     </CardContent>
-    {loading && <h3>Loading ...</h3>}
-    {data && 
-      estimates.map((estimate, index) => (
+    {estimates && estimates.filter((estimate) => (
+      get(estimate,'ticketId') === get(ticket,'id'))).map((
+        estimate, index) => (
         <Card key={index}>
           <CardContent>
             <Typography gutterBottom>
@@ -102,7 +81,6 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
       ))}
     <Button onClick={() => (toggleShowDialogue(ticket))}>Vote</Button>
     <CreateEstimate
-      refetch={refetch}
       text={`Please input the point for ${get(ticket,'name')}`}
       showDialogue={showDialogue}
       toggleShowDialogue={toggleShowDialogue}

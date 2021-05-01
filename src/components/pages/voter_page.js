@@ -15,9 +15,20 @@ const GET_VOTING_SESSION = gql`
       tickets{
         id
         name
+        estimates{
+          id
+          ticketId
+          point
+          voterId
+        }
       }
       voters{
         name
+        estimates{
+          id
+          ticketId
+          point
+        }
       }
       active
       votingDuration
@@ -35,6 +46,7 @@ const CREATE_ESTIMATE = gql`
       }){
       estimate{
         id
+        ticketId
         point
       }
     }
@@ -54,7 +66,7 @@ const VoterPage = ({ location }) => {
   const { state } = location;
   const { voter } = state;
   const { votingSessionId, id } = voter;
-  const { loading, data, subscribeToMore } = useQuery(GET_VOTING_SESSION,{
+  const { loading, data, refetch, subscribeToMore } = useQuery(GET_VOTING_SESSION,{
     variables: {id: votingSessionId}
   });
 
@@ -89,7 +101,7 @@ const VoterPage = ({ location }) => {
     setCurrentTicketId(get(ticket,'id'))
   }
 
-  const onSubmit = (variables, refetch) => {
+  const onSubmit = (variables) => {
     const mutationVariables = { 
       ...variables, 
       point: parseInt(variables.point), 
@@ -105,11 +117,18 @@ const VoterPage = ({ location }) => {
     })
   }
 
+  const voterEstimates = (voters, voter) => (
+    voters.filter((indexedVoter) => (
+      get(indexedVoter,'name') === get(voter,'name')
+    ))[0].estimates
+  )
+
 
   const tickets = (votingSession) => (
     get(votingSession, 'tickets').map((ticket, index) => (
       <TicketVote
         voterId={get(voter,'id')}
+        estimates={voterEstimates(get(data,'votingSession.voters'),voter)}
         key={index} 
         ticket={ticket} 
         handleSubmit={handleSubmit} 
