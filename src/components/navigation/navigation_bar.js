@@ -37,11 +37,6 @@ const NavigationBar = () => {
               SIGN IN
             </Typography>
           </NavLink>
-          <NavLink to="/about" className={classes.title}>
-            <Typography variant="h6" className={classes.title}>
-              ABOUT
-            </Typography>
-          </NavLink>
           <NavLink to="/join" className={classes.title}>
             <Typography variant="h6" className={classes.title}>
               JOIN
