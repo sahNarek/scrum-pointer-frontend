@@ -11,10 +11,12 @@ import CreateEstimate from '../dialogs/create_estimate';
 import EditEstimate from '../dialogs/edit_estimate';
 
 
-const GET_VOTER_ESTIMATES_FOR_TICKET = gql`
-  query getVoterEstimates($voterId: ID!, $ticketId: ID!){
+const GET_VOTER_ESTIMATES = gql`
+  query getVoterEstimates($voterId: ID!, $ticketId: ID){
     getVoterEstimates(voterId: $voterId, ticketId: $ticketId){
       id
+      ticketId
+      voterId
       point
     }
   }
@@ -31,6 +33,7 @@ const EDIT_ESTIMATE = gql`
       }){
       estimate{
         id
+        ticketId
         point
       }
     }
@@ -43,18 +46,15 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
   const [ currentEstimateId, setCurrentEstimateId ] = useState(null);
   const [ editEstimate ] = useMutation(EDIT_ESTIMATE);
 
-  const { loading, data, refetch } = useQuery(GET_VOTER_ESTIMATES_FOR_TICKET,{
+  const { loading, data, refetch } = useQuery(GET_VOTER_ESTIMATES,{
     variables: {
-      voterId,
-      ticketId: get(ticket, 'id')
+      voterId
     }
   })
   
   const estimates = get(data,'getVoterEstimates');
 
   const onEditSubmit = (variables) => {
-    console.log("the vars", variables)
-    console.log('current estiamte id', currentEstimateId)
     const mutationVariables = { 
       ...variables, 
       point: parseInt(variables.point), 
@@ -73,6 +73,10 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
     setCurrentEstimateId(get(estimate,'id'))
   }
 
+  const filteredEstimates = (estimates) => (
+    estimates.filter((estimate) => (get(estimate,'ticketId') === get(ticket, 'id')))
+  )
+
   return (
     <Card>
     <CardContent>
@@ -81,8 +85,7 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
       </Typography>
     </CardContent>
     {loading && <h3>Loading ...</h3>}
-    {data && 
-      estimates.map((estimate, index) => (
+    {data && filteredEstimates(estimates).map((estimate, index) => (
         <Card key={index}>
           <CardContent>
             <Typography gutterBottom>
@@ -100,7 +103,7 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
           />
         </Card>
       ))}
-    <Button onClick={() => (toggleShowDialogue(ticket))}>Vote</Button>
+    {data && filteredEstimates(estimates).length === 0 && <Button onClick={() => (toggleShowDialogue(ticket))}>Vote</Button>}
     <CreateEstimate
       refetch={refetch}
       text={`Please input the point for ${get(ticket,'name')}`}
