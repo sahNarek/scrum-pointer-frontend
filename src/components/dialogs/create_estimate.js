@@ -11,7 +11,7 @@ const CreateEstimate = ({text, showDialogue, toggleShowDialogue, handleSubmit, o
   return (
     <Dialog open={showDialogue} onClose={() => (toggleShowDialogue())} aria-labelledby="form-dialog-title">
         <form onSubmit={handleSubmit((variables) => 
-          onSubmit(variables))}>
+          onSubmit(variables, refetch))}>
           <DialogContent>
             <DialogContentText>
               {text}
