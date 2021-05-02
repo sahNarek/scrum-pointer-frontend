@@ -10,6 +10,7 @@ import gql from 'graphql-tag';
 import { Redirect } from 'react-router-dom';
 import Loading from '../routing/loading';
 import { useLocation } from "react-router-dom";
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -75,7 +76,7 @@ const SignInPage = ({changeCurrentUser}) => {
                   variant="filled" 
                   inputRef={register({required: true})}
                 />
-                {errors.email && <p>This is a required field</p>}
+                {errors.email && <Typography paragraph={true}>This is a required field</Typography>}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -89,7 +90,7 @@ const SignInPage = ({changeCurrentUser}) => {
                     required: "This is a required field",
                   })}
                 />
-                {errors.password && <p>{errors.password.message}</p>}
+                {errors.password && <Typography paragraph={true}>{errors.password.message}</Typography>}
               </Grid>
             </Grid>
           </Grid>

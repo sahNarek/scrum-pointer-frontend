@@ -91,7 +91,7 @@ const UserPage = () => {
           return(
             <>
               <UserNavigation signOutHandler={() => (signOutHandler(history))}/>
-              <h2>Welcome {getFullName(currentUser)}</h2>
+              <Typography variant="h2">Welcome {getFullName(currentUser)}</Typography>
               <Button className={classes.root} onClick={toggleShowForm}>Create a Voting Session</Button>
               {currentUser && votingSessions(currentUser)}
               <VotingSessionDialogue showForm={showForm} toggleShowForm={toggleShowForm} refetch={refetch}/>

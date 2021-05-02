@@ -123,7 +123,7 @@ const VoterPage = ({ location }) => {
 
   return (
     <>
-      <h1>Hi {get(voter, 'name')}</h1>
+      <Typography variant="h1">Hi {get(voter, 'name')}</Typography>
       {loading && <Loading/>}
         {!loading && 
         <>
