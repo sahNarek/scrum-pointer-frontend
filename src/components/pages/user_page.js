@@ -12,7 +12,7 @@ import Loading from '../../components/routing/loading';
 import { Typography } from '@material-ui/core';
 
 const signOutHandler = (history) => {
-  localStorage.clear()
+  localStorage.removeItem('AUTH-TOKEN')
   history.push('/home')
 }
 

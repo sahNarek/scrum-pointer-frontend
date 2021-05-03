@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import { Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+
+import { Button, Typography } from '@material-ui/core';
 import Loading from '../../components/routing/loading';
 import TicketVote from '../../components/ticket/ticket_vote';
 
@@ -51,6 +53,7 @@ const SUBSCRIBE_TO_TICKETS = gql`
 `
 
 const VoterPage = ({ location }) => {
+  const history = useHistory();
   const { state } = location;
   const { voter } = state;
   const { votingSessionId, id } = voter;
@@ -62,6 +65,11 @@ const VoterPage = ({ location }) => {
   const [ showDialogue, setShowDialogue ] = useState(false);
   const [ currentTicketId, setCurrentTicketId ] = useState(null);
   const [ createEstimate ] = useMutation(CREATE_ESTIMATE);
+
+  const exitHandler = (history) => {
+    localStorage.removeItem('VOTER-TOKEN')
+    history.push('/home')
+  }
 
   useEffect(() => {
     const unsubscribe = subscribeToMore({
@@ -124,6 +132,7 @@ const VoterPage = ({ location }) => {
   return (
     <>
       <Typography variant="h1">Hi {get(voter, 'name')}</Typography>
+      <Button onClick={() => (exitHandler(history))}>Leave</Button>
       {loading && <Loading/>}
         {!loading && 
         <>

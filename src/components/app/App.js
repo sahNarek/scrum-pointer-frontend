@@ -16,6 +16,7 @@ import { createBrowserHistory } from "history";
 import PrivateRoute from "../../components/routing/private_route";
 import JoinAsVoter from '../join/join_as_voter';
 import VoterPage from "../../components/pages/voter_page";
+import Loading from '../routing/loading';
 
 const GET_CURRENT_USER = gql`
   query{
@@ -36,12 +37,21 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
-
+const GET_CURRENT_VOTER = gql`
+  query{
+    currentVoter{
+      id,
+      name,
+      votingSessionId
+    }
+  }
+`;
 
 const App = () => {
   const { loading, data, refetch } = useQuery(GET_CURRENT_USER);
-  const client = useApolloClient();
 
+  const { loading: loadingVoter, data: voterData } = useQuery(GET_CURRENT_VOTER);
+  const client = useApolloClient();
 
   const changeCurrentUser = (user) => {
     client.writeData({data: {...data, currentUser: user}});
@@ -58,6 +68,12 @@ const App = () => {
             <Route exact path="/home">
               <NavigationBar/>
               {!loading && get(data,'currentUser') != null && <Redirect to={`/user/${get(data,'currentUser.id')}`}/>}      
+              {(loading || loadingVoter) && <Loading/>}
+              {!loadingVoter && get(voterData, 'currentVoter.id') != null  &&
+              <Redirect to={{
+                pathname: `/voter/${get(voterData,'currentVoter.id')}`,
+                state: { voter: get(voterData,'currentVoter')}
+              }}/>}
             </Route>
             <Route exact path="/sign_in">
               <SignInPage changeCurrentUser={changeCurrentUser}/>

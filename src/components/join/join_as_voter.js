@@ -23,6 +23,7 @@ const JOIN_AS_VOTER = gql`
           name
           votingSessionId
         }
+        token
         errors
       }
     }
@@ -32,10 +33,16 @@ const JOIN_AS_VOTER = gql`
 const JoinAsVoter = () => {
   const { register, handleSubmit } = useForm();
   const history = useHistory();
-  const [ joinAsVoter, { loading, error, data } ] = useMutation(JOIN_AS_VOTER);
+  const [ joisnAsVoter, { loading, error, data } ] = useMutation(JOIN_AS_VOTER, {
+    onCompleted: (data) => {
+      if(get(data, 'joinAsVoter.token')){
+        localStorage.setItem('VOTER-TOKEN', get(data, 'joinAsVoter.token'))
+      }
+    }
+  });
 
   const onSubmit = (variables) => {
-    joinAsVoter({variables})
+    joisnAsVoter({variables})
   }
 
   const handleClose = () => {

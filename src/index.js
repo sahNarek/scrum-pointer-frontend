@@ -26,10 +26,12 @@ const hasSubscriptionOperation = ({ query: { definitions } }) => {
 
 const authLink = setContext((_, { headers}) => {
   const token = localStorage.getItem('AUTH-TOKEN');
+  const voterToken = localStorage.getItem('VOTER-TOKEN')
   return {
     headers: {
       ...headers,
-      authorization: token ? `${token}` : ``
+      authorization: token ? `${token}` : ``,
+      voterToken: voterToken ? `${voterToken}` : ``
     }
   }
 })
