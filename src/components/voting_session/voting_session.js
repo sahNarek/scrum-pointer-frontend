@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
+import Pluralize from 'pluralize';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { Typography } from '@material-ui/core';
@@ -103,7 +104,7 @@ const VotingSession = ({match}) => {
           Session Name: {get(data, 'votingSession.name')}
         </Typography>
         <Typography variant="h6">
-          {0 || get(data, 'votingSession.votersCount')} voters have joined the session.
+          {Pluralize('voter',get(data, 'votingSession.votersCount') || 0, true)} joined the session.
         </Typography>
         <Button onClick={toggleShowForm}>Create a Ticket</Button>
         <TicketDialogue showForm={showForm} toggleShowForm={toggleShowForm} refetch={refetch} votingSessionId={id}/>
