@@ -28,6 +28,7 @@ const GET_CURRENT_USER = gql`
       votingSessions{
         id
         name
+        votersCount
         votingDuration
         tickets{
           name
