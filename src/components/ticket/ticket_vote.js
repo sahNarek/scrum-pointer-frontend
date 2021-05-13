@@ -40,7 +40,7 @@ const EDIT_ESTIMATE = gql`
   }
 `
 
-const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDialogue, register, onSubmit}) => {
+const TicketVote = ({voterId, currentTicket, ticket, showDialogue, handleSubmit, toggleShowDialogue, register, onSubmit}) => {
 
   const [ showEditDialogue, setShowEditDialogue ] = useState(false);
   const [ currentEstimateId, setCurrentEstimateId ] = useState(null);
@@ -106,7 +106,7 @@ const TicketVote = ({voterId, ticket, showDialogue, handleSubmit, toggleShowDial
     {data && filteredEstimates(estimates).length === 0 && <Button onClick={() => (toggleShowDialogue(ticket))}>Vote</Button>}
     <CreateEstimate
       refetch={refetch}
-      text={`Please input the point for ${get(ticket,'name')}`}
+      text={`Please input the point for ${get(currentTicket,'name')}`}
       showDialogue={showDialogue}
       toggleShowDialogue={toggleShowDialogue}
       handleSubmit={handleSubmit}

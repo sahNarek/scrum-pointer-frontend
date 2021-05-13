@@ -5,7 +5,6 @@ import { useMutation } from '@apollo/react-hooks';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import { useHistory } from 'react-router-dom';
-
 import { Button, Typography } from '@material-ui/core';
 import Loading from '../../components/routing/loading';
 import TicketVote from '../../components/ticket/ticket_vote';
@@ -63,7 +62,7 @@ const VoterPage = ({ location }) => {
 
   const { register, handleSubmit } = useForm();
   const [ showDialogue, setShowDialogue ] = useState(false);
-  const [ currentTicketId, setCurrentTicketId ] = useState(null);
+  const [ currentTicket, setcurrentTicket ] = useState(null);
   const [ createEstimate ] = useMutation(CREATE_ESTIMATE);
 
   const exitHandler = (history) => {
@@ -94,7 +93,9 @@ const VoterPage = ({ location }) => {
 
   const toggleShowDialogue = (ticket) => {
     setShowDialogue(!showDialogue)
-    setCurrentTicketId(get(ticket,'id'))
+    if(typeof ticket !== 'undefined'){
+      setcurrentTicket(ticket)
+    }
   }
 
   const onSubmit = (variables, refetch) => {
@@ -103,7 +104,7 @@ const VoterPage = ({ location }) => {
       point: parseInt(variables.point), 
       votingSessionId, 
       voterId: id, 
-      ticketId: currentTicketId 
+      ticketId: get(currentTicket,'id') 
     };
     createEstimate({variables: mutationVariables}).then((data) => {
       if(!(get(data,'errors'))){
@@ -125,6 +126,7 @@ const VoterPage = ({ location }) => {
         toggleShowDialogue={toggleShowDialogue}
         register={register}
         onSubmit={onSubmit}
+        currentTicket={currentTicket}
         />
     ))
   )
