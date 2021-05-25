@@ -1,23 +1,47 @@
 import React, { useEffect } from 'react';
 import { get } from 'lodash'
 import { gql } from 'apollo-boost';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Loading from '../../components/routing/loading';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 const GET_TICKET = gql`
   query ticket($id: ID!){
     ticket(id: $id){
+      id
       name
       estimates{
         id
         point
         voterId
+        finalEstimate
         voter{
           id
           name
+        }
+      }
+    }
+  }
+`
+
+const EXPOSE_ALL_VOTES = gql`
+  mutation exposeAllVotes($ticketId: ID!, $revoting: Boolean){
+    exposeAllVotes(input:{ticketId: $ticketId, revoting: $revoting}){
+      ticket{
+        id
+        name
+        estimates{
+          id
+          point
+          voterId
+          finalEstimate
+          voter{
+            id
+            name
+          }
         }
       }
     }
@@ -29,6 +53,7 @@ const SUBSCRIBE_TO_ESTIMATES = gql`
     estimateAddedToTicket(ticketId:$ticketId){
       id
       point
+      finalEstimate
       voter{
         id
         name
@@ -66,6 +91,8 @@ const Ticket = ( {match }) => {
     variables: {id: id }
   });
 
+  const [exposeAllVotes] = useMutation(EXPOSE_ALL_VOTES);
+
   useEffect(() => {
     const unsubscribe = subscribeToMore({
       document: SUBSCRIBE_TO_ESTIMATES,
@@ -93,7 +120,7 @@ const Ticket = ( {match }) => {
       <Card key={index}>
         <CardContent>
           <Typography gutterBottom>
-            Estimated Point: {get(estimate, 'point')}
+            Estimated Point: {estimate?.finalEstimate ? get(estimate, 'point') : '****'}
           </Typography>
           <Typography gutterBottom>
             Estimated by: {get(estimate, 'voter.name')}
@@ -108,6 +135,7 @@ const Ticket = ( {match }) => {
   return ( 
     <>
       <Typography variant="h1">{(get(data, 'ticket.name'))}</Typography>
+      <Button onClick={() => (exposeAllVotes({variables:{ticketId: data?.ticket?.id}}))}>Expose Votes</Button>
       {loading && <Loading/>}
       {ticket && estimates(ticket)}
     </>
